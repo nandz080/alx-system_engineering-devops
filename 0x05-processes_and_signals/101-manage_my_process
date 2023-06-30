@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# manager for manage_my_process
+
+stop_process() {
+    echo "manage_my_process stopped"
+    rm /var/run/my_process.pid
+    pkill -f "I am alive!"
+}
+
+# Function to handle starting the process
+start_process() {
+    if [ -f "/var/run/my_process.pid" ]; then
+        echo "manage_my_process is already started."
+        exit 1
+    fi
+
+    echo "manage_my_process started"
+    while true; do
+        echo "I am alive!"
+        sleep 2
+    done > /tmp/my_process &
+    echo $! > /var/run/my_process.pid
+}
+
+# Function to handle restarting the process
+restart_process() {
+    stop_process
+    start_process
+    echo "manage_my_process restarted"
+}
+
+# Check for command-line arguments
+case "$1" in
+    start)
+        start_process
+        ;;
+    stop)
+        stop_process
+        ;;
+    restart)
+        restart_process
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+        ;;
+esac
