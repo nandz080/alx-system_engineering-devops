@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#Script that displays all listening sockets 
+lsof -i -P -n | grep LISTEN | while read -r line; do
+    # Extract the PID, program name, and port
+    pid=$(echo "$line" | awk '{print $2}')
+    program=$(echo "$line" | awk '{print $1}')
+    port=$(echo "$line" | awk '{print $9}')
+
+    # Print the PID, program name, and port
+    echo "PID: $pid, Program: $program, Port: $port"
+done
