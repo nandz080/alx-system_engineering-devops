@@ -1,18 +1,14 @@
 #!/usr/bin/env bash
 # Script that configures a new Ubuntu machine to respect above requirements
 
-sudo apt-get update
-sudo apt-get install -y nginx
 
-echo "Hello World!" | sudo tee /var/www/html/index.html
+redirecton="\n\tlocation /redirect_me {\n\t\treturn 301 https://youtu.be/nXlnx8nZyE?si=ZF9kPvIFQTqUHwp6\n\t}\n"
+file="/etc/nginx/sites-available/default"
 
-# Configuration variables
-custom_server_name="howtogeek.com"
-redirection_url="https://www.howtogeek.com/666395/how-to-use-the-sed-command-on-linux/redirect-page"
-replacement_content="server_name $custom_server_name;\n\trewrite ^\/redirect_me $redirection_url permanent;"
+apt-get -y update
+apt-get -y install nginx
+ufw allow 'Nginx HTTP'
+echo "Hello World!" | sudo tee  /var/www/html/index.nginx-debian.html
+sed -i "10i\ $redirection" "$file"
 
-# Replace server_name and add redirection in Nginx configuration
-sudo sed -i "s/server_name _;/$replacement_content/" /etc/nginx/sites-enabled/default
-
-# Restart Nginx to apply changes
-sudo service nginx restart
+service nginx restart
